@@ -10,11 +10,38 @@ function showPokemon(items) {
 
 // prvih 20 sa slice
 
-fetch("https://pokeapi.co/api/v2/pokemon-color/red")
+function makeHeadersDarkBlue() {
+    const headers = document.querySelectorAll("th");
+    headers.forEach(function (header) {
+        header.style.color = "darkBlue";
+    });
+}
+
+function filterPokemonWith(items, letter) {
+    return items.filter(function (item) {
+        return item.name[0] === letter;
+    });
+}
+
+fetch("https://pokeapi.co/api/v2/pokemon-color/yellow")
     .then(response => response.json())
     .then((json) => {
         console.log(Handlebars);
-        showPokemon(json.pokemon_species);
+        setTimeout(() => {
+            const originalPokemonCount = json.pokemon_species.length;
+            const filteredPokemon = filterPokemonWith(json.pokemon_species, "p");
+            const hiddenPokemonCount = originalPokemonCount - filteredPokemon.length;
+
+            const div = document.createElement("div");
+            div.innerHTML = hiddenPokemonCount;
+            div.style.position = "fixed";
+            div.style.top = 0;
+            div.style.left = 0;
+            document.body.appendChild(div);
+
+            showPokemon(filteredPokemon);
+            makeHeadersDarkBlue();
+        }, 2000);
     })
     .catch((error) => {
         console.error(error);
